@@ -1,4 +1,3 @@
-# FILEPATH
 
     <h1>Account Abstraction in Hardhat Project</h1>
     <p>This code implements the concept of account abstraction in a Hardhat project on the Mumbai network.</p>
