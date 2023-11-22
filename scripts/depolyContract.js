@@ -3,13 +3,13 @@ const {EntryPointAddress} = require("./data.js");
 
 async function main() {
   // Get the Contract Factory
-  const SimpleAccountFactory = await ethers.getContractFactory(
-    "SimpleAccountFactory"
+  const CoreToken = await ethers.getContractFactory(
+    "CoreToken"
   );
 
   // Deploy the contract
-  const txReceipt = await SimpleAccountFactory.deploy(EntryPointAddress);
-  console.log("SimpleAccountFactory address : ", txReceipt.target);
+  const txReceipt = await CoreToken.deploy();
+  console.log("CoreToken address : ", txReceipt.target);
 }
 
 main()
