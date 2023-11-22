@@ -1,4 +1,5 @@
 const { ethers } = require("hardhat");
+const {EntryPointAddress} = require("./data.js");
 
 async function main() {
   // Get the Contract Factory
@@ -7,9 +8,7 @@ async function main() {
   );
 
   // Deploy the contract
-  const txReceipt = await SimpleAccountFactory.deploy(
-    "0x5ff137d4b0fdcd49dca30c7cf57e578a026d2789"
-  );
+  const txReceipt = await SimpleAccountFactory.deploy(EntryPointAddress);
   console.log("SimpleAccountFactory address : ", txReceipt.target);
 }
 

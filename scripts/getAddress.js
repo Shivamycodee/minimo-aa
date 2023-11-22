@@ -10,14 +10,32 @@ async function main() {
     SimpleAccountFactoryAddress
   );
 
-    const res = await SimpleAccountFactory.connect(deployer).createAccount(
-      "0x198415B49a518E488beD1Fe78C11bD0EE142FFc2",
-      12332
-    );
+  // const _res = await SimpleAccountFactory.connect(deployer).createAccount(
+  //   "0x198415B49a518E488beD1Fe78C11bD0EE142FFc2",
+  //   1
+  // );
+  // const res = await _res.wait();
 
-    const output = await res.wait();
-    console.log(output);
+  console.log("SimpleAccountFactoryAddress : ", SimpleAccountFactoryAddress);
 
+  const res = await SimpleAccountFactory.connect(deployer).getAddress(
+    "0x198415B49a518E488beD1Fe78C11bD0EE142FFc2",
+    1
+  );
+  console.log("res : ",res);
+
+  // const res1 = await SimpleAccountFactory.checkAddress(
+  //   "0x198415B49a518E488beD1Fe78C11bD0EE142FFc2",
+  //   1
+  // );
+  //  console.log(res1)
+
+  
+  // const res = await SimpleAccountFactory.connect(deployer).createdAccounts(
+  //     "0x198415B49a518E488beD1Fe78C11bD0EE142FFc2",
+  //     1
+  //   );
+    
 }
 
 main()

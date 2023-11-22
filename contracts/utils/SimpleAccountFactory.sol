@@ -19,6 +19,11 @@ contract SimpleAccountFactory {
         accountImplementation = new SimpleAccount(_entryPoint);
     }
 
+    // Mapping to store the created facutal address temperorly...
+
+    mapping(address=>mapping(uint256=>address)) public createdAccounts;
+    mapping(address=>mapping(uint256=>address)) public checkAddress;
+
     /**
      * create an account, and return its address.
      * returns the address even if the account is already deployed.
@@ -27,26 +32,31 @@ contract SimpleAccountFactory {
      */
     function createAccount(address owner,uint256 salt) public returns (SimpleAccount ret) {
         address addr = getAddress(owner, salt);
+        checkAddress[owner][salt] = addr;
         uint codeSize = addr.code.length;
         if (codeSize > 0) {
-            return SimpleAccount(payable(addr));
+            return (SimpleAccount(payable(addr)));
         }
         ret = SimpleAccount(payable(new ERC1967Proxy{salt : bytes32(salt)}(
                 address(accountImplementation),
                 abi.encodeCall(SimpleAccount.initialize, (owner))
             )));
+        createdAccounts[owner][salt] = address(ret);
     }
 
     /**
      * calculate the counterfactual address of this account as it would be returned by createAccount()
      */
     function getAddress(address owner,uint256 salt) public view returns (address) {
-        return Create2.computeAddress(bytes32(salt), keccak256(abi.encodePacked(
-                type(ERC1967Proxy).creationCode,
-                abi.encode(
-                    address(accountImplementation),
-                    abi.encodeCall(SimpleAccount.initialize, (owner))
-                )
-            )));
-    }
+    return Create2.computeAddress(bytes32(salt), keccak256(abi.encodePacked(
+           type(ERC1967Proxy).creationCode,
+           abi.encode(
+               address(accountImplementation),
+               abi.encodeCall(SimpleAccount.initialize, (owner))
+           )
+       )));
+
+    
 }
+
+} 

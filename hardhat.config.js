@@ -10,7 +10,7 @@ const URL =
 
 module.exports = {
   solidity: "0.8.20",
-   settings: {
+  settings: {
     optimizer: {
       enabled: true,
       runs: 50,
@@ -22,5 +22,8 @@ module.exports = {
       gasPrice: 150_000_000_000,
       accounts: [PRIVATE_KEY_POOL],
     },
+  },
+  etherscan: {
+    apiKey: "FW53GPR8BA8GY35KZAQ8N16T4X61HQRDA8",
   },
 };
