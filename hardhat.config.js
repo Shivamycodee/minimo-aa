@@ -13,8 +13,14 @@ module.exports = {
   settings: {
     optimizer: {
       enabled: true,
-      runs: 50,
+      runs: 2000,
+      details: {
+        yulDetails: {
+          optimizerSteps: "unlimited",
+        },
+      },
     },
+    viaIR: true, 
   },
   networks: {
     mumbai: {

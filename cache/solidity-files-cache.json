@@ -464,8 +464,8 @@
       ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\core\\UserOperationLib.sol": {
-      "lastModificationDate": 1700568487205,
-      "contentHash": "cb0a206c384e6e81be11b79850150746",
+      "lastModificationDate": 1700831951664,
+      "contentHash": "1ec839c8ea953f0b55f8348e50a1e6fd",
       "sourceName": "contracts/core/UserOperationLib.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -496,7 +496,7 @@
         "../interfaces/UserOperation.sol"
       ],
       "versionPragmas": [
-        "^0.8.12"
+        "^0.8.20"
       ],
       "artifacts": [
         "UserOperationLib"
@@ -1428,6 +1428,126 @@
       ],
       "artifacts": [
         "IERC20Metadata"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\core\\BasePaymaster.sol": {
+      "lastModificationDate": 1700831946422,
+      "contentHash": "133868dfdcf3026e3244856076d92495",
+      "sourceName": "contracts/core/BasePaymaster.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "../interfaces/IPaymaster.sol",
+        "../interfaces/IEntryPoint.sol",
+        "./Helpers.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "BasePaymaster"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1699532543112,
+      "contentHash": "d3c790edc9ccf808a17c5a6cd13614fd",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\VerifyingPaymaster.sol": {
+      "lastModificationDate": 1700922085013,
+      "contentHash": "773131ab52478e98d0b5987fa868a0a5",
+      "sourceName": "contracts/utils/VerifyingPaymaster.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../core/BasePaymaster.sol",
+        "../core/UserOperationLib.sol",
+        "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
+        "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "VerifyingPaymaster"
       ]
     }
   }
