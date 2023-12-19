@@ -24,7 +24,14 @@ contract VerifyingPaymaster is BasePaymaster {
     using ECDSA for bytes32;
     using UserOperationLib for UserOperation;
 
-    address public immutable verifyingSigner;
+    address public Admin;
+
+    modifier onlyAdmin() {
+        require(msg.sender == Admin, "only admin");
+        _;
+    }
+
+    address public verifyingSigner;
 
     uint256 private constant VALID_TIMESTAMP_OFFSET = 20;
 
@@ -32,8 +39,12 @@ contract VerifyingPaymaster is BasePaymaster {
 
     constructor(IEntryPoint _entryPoint, address _verifyingSigner) BasePaymaster(_entryPoint) {
         verifyingSigner = _verifyingSigner;
+        Admin = msg.sender;
     }
 
+    function ChangeAdmin(address _newAdmin) public onlyAdmin {
+        Admin = _newAdmin;
+    }
 
     /**
      * return the hash we're going to sign off-chain (and validate on-chain)
@@ -42,31 +53,6 @@ contract VerifyingPaymaster is BasePaymaster {
      * note that this signature covers all fields of the UserOperation, except the "paymasterAndData",
      * which will carry the signature itself.
      */
-
-    // function getHash(UserOperation calldata userOp, uint48 validUntil, uint48 validAfter)
-    // public view returns (bytes32) {
-    //     //can't use userOp.hash(), since it contains also the paymasterAndData itself.
-    //     address sender = userOp.getSender();
-    //     return
-    //         keccak256(
-    //             abi.encode(
-    //                 sender,
-    //                 userOp.nonce,
-    //                 keccak256(userOp.initCode),
-    //                 keccak256(userOp.callData),
-    //                 userOp.callGasLimit,
-    //                 userOp.verificationGasLimit,
-    //                 userOp.preVerificationGas,
-    //                 userOp.maxFeePerGas,
-    //                 userOp.maxPriorityFeePerGas,
-    //                 block.chainid,
-    //                 address(this),
-    //                 validUntil,
-    //                 validAfter
-    //             )
-    //         );
-    // }
-
 
     function getHash(UserOperation calldata userOp, uint48 validUntil, uint48 validAfter)
     public view returns (bytes32) {

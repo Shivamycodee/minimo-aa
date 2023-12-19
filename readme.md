@@ -33,3 +33,28 @@ For any questions or feedback, please reach out to us at our GitHub Issues page.
 ## Acknowledgments
 
 This project was inspired by the Blocknative blog post on account abstraction and ERC-4337.
+
+
+
+
+
+## Final UserOps Structure ( Calling a swap function...)
+
+ userOperation = {
+
+      sender: SCAddress,
+      nonce: 0, // random nonce...
+      initCode: ethers.hexlify(ethers.utils.toUtf8Bytes("")), // Initialize as empty bytes or with relevant initialization data
+      callData: SwapContract.interface.encodeFunctionData("SwapNovice", [
+        tokenIN,
+        amount,
+        true, // YING -> YANG
+      ]),
+      callGasLimit: 500000, // Set the gas limit for the call (example value)
+      verificationGasLimit: "73672", // Set the verification gas limit (example value)
+      preVerificationGas: "73588", // Set the pre-verification gas (example value)
+      maxFeePerGas: "2250000025", // Set the maximum fee per gas to 100 gwei
+      maxPriorityFeePerGas: "1500000017", // Set the maximum priority fee per gas to 0 gwei
+      paymasterAndData: ethers.ZeroAddress, // get this from ValidatePayMasterUserOps
+      signature: ethers.hexlify(ethers.utils.toUtf8Bytes("")), // Initialize as empty bytes or with relevant signature
+    };
