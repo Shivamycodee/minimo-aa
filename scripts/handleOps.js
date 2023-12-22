@@ -24,15 +24,16 @@ class CustomJsonRpcProvider extends JsonRpcProvider {
   }
 }
 
-const NONCE = 11;
+const NONCE = 27;
+
 
 async function main() {
 
-    const rpcUrl =
-      "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
+    // const rpcUrl =
+    //   "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
 
-// const rpcUrl =
-//   "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
+const rpcUrl =
+  "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
 
   const customProvider = new CustomJsonRpcProvider(rpcUrl);
   const [deployer] = await ethers.getSigners();
@@ -41,6 +42,9 @@ async function main() {
     "EntryPoint",
     EntryPointAddress
   );
+
+  const userNonce = await EntryPoint.connect(deployer).getNonce(SCAddress,0);
+  console.log("userNonce : ", userNonce);
 
   const opObject = await getUserOperation();
   console.log("opObject : ", opObject);
@@ -53,10 +57,6 @@ async function main() {
     console.log("signature : ", signature);
     opObject.signature = signature;
 
-    const myNonce = await EntryPoint.connect(deployer).getNonce(SCAddress, 0);
-    console.log("myNonce : ", myNonce);
-
-
   try {
     const userOpHash = await customProvider.sendUserOperation(
       opObject,
@@ -67,6 +67,7 @@ async function main() {
     console.error("Error sending user operation:", error);
   }
 
+  // await EntryPoint.connect(deployer).handleOps([opObject],SCAddress);
 
 
 }
@@ -77,21 +78,37 @@ const getUserOperation = async () => {
   const tokenIN = "0x8De6DcD5Bd1DeC1e8197FB4E0057498e7207133b";
   const SwapAddress = "0x31A92fCA50F511db28b57185ED6Ae12f565F2762";
   const TokenContract = new ethers.Contract(tokenIN, TokenABI, signer);
-  const SwapAllowance = ethers.parseEther("100");
+  const SwapAllowance = ethers.parseEther("10");
+
+  //  callData: TokenContract.interface.encodeFunctionData("approve", [
+  //     SwapAddress,
+  //     SwapAllowance,
+  //   ]),
+
+  const minTx = await TokenContract.transfer.populateTransaction(
+    SwapAddress,
+    SwapAllowance
+  );
+
+  const SimpleAccount = await ethers.getContractAt("SimpleAccount", SCAddress);
+
+  console.log("minTx : ", minTx);
 
   const userOperation = {
     sender: "0x3E2341F136005F88323dDdF5BA025c0b9Bb41feF",
     nonce: NONCE,
     initCode: ethers.hexlify(ethers.toUtf8Bytes("")),
-    callData: TokenContract.interface.encodeFunctionData("balanceOf", [
-      SwapAddress,
+    callData: SimpleAccount.interface.encodeFunctionData("execute", [
+      tokenIN,
+      0,
+      minTx.data,
     ]),
-    callGasLimit: 92489,
-    verificationGasLimit: 67538,
-    preVerificationGas: 73636,
-    maxFeePerGas: 2201885922,
-    maxPriorityFeePerGas: 2201885904,
-    paymasterAndData: ethers.hexlify(ethers.toUtf8Bytes("")), 
+    callGasLimit: 112489,
+    verificationGasLimit: 87538,
+    preVerificationGas: 93636,
+    maxFeePerGas: 100_000_000_000,
+    maxPriorityFeePerGas: 100_000_000_000,
+    paymasterAndData: ethers.hexlify(ethers.toUtf8Bytes("")),
   };
 
   const hash = await getUserOpHash(userOperation, EntryPointAddress, 80001);
