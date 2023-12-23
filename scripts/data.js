@@ -11,9 +11,18 @@ data = {
   WalletAddress: "0xD2e7460e5E33Eb228DFC6cD0E550F6f9779BCEC3",
   SCAddress: "0x3E2341F136005F88323dDdF5BA025c0b9Bb41feF",
 
-  // Parallel Contracts...
+  // Parallel Contracts... 
 
   SimpleAccount: "0x0887401bb0c72BDE1437cC0F2DE3aE658e97217C",
+
+  // Paymaster Signer data...
+
+  PayMaster_PUB_Address: "0xEb704E9Bc494EC6B67540B6a45609C1a594BD355",
+  PayMaster_PRV_KEY:
+    "fcaaf6c304ad2e8ed1e9413be2a0fd7afd577ecae67280a2c2b90b0827ffe4e3",
+
+  POOL_PRV_KEY:
+    "250acaa252c13324faaedf8cac88016950f9c139d050b1c6a86d59c8e8a9db7e",
 };
 
 module.exports = data;

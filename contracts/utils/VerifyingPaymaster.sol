@@ -91,7 +91,7 @@ function getPartialHash(UserOperation calldata userOp, uint48 validUntil, uint48
      */
 
     function _validatePaymasterUserOp(UserOperation calldata userOp, bytes32 /*userOpHash*/, uint256 requiredPreFund)
-    internal view override returns (bytes memory context, uint256 validationData) {
+    internal view override returns (bytes memory context, uint256 vcalidationData) {
         (requiredPreFund);
 
         (uint48 validUntil, uint48 validAfter, bytes calldata signature) = parsePaymasterAndData(userOp.paymasterAndData);

@@ -28,12 +28,11 @@ const NONCE = 27;
 
 
 async function main() {
+  // const rpcUrl =
+  //   "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
 
-    // const rpcUrl =
-    //   "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
-
-const rpcUrl =
-  "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
+  const rpcUrl =
+    "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
 
   const customProvider = new CustomJsonRpcProvider(rpcUrl);
   const [deployer] = await ethers.getSigners();
@@ -43,7 +42,7 @@ const rpcUrl =
     EntryPointAddress
   );
 
-  const userNonce = await EntryPoint.connect(deployer).getNonce(SCAddress,0);
+  const userNonce = await EntryPoint.connect(deployer).getNonce(SCAddress, 0);
   console.log("userNonce : ", userNonce);
 
   const opObject = await getUserOperation();
@@ -52,10 +51,10 @@ const rpcUrl =
   const res = await EntryPoint.connect(deployer).getUserOpHash(opObject);
   const wallet = new ethers.Wallet(
     "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8"
-    ); 
-    const signature = await wallet.signMessage(ethers.toBeArray(res));
-    console.log("signature : ", signature);
-    opObject.signature = signature;
+  );
+  const signature = await wallet.signMessage(ethers.toBeArray(res));
+  console.log("signature : ", signature);
+  opObject.signature = signature;
 
   try {
     const userOpHash = await customProvider.sendUserOperation(
@@ -68,8 +67,7 @@ const rpcUrl =
   }
 
   // await EntryPoint.connect(deployer).handleOps([opObject],SCAddress);
-
-
+  // console.log("tx : ", tx.hash);
 }
 
 const getUserOperation = async () => {
@@ -80,10 +78,8 @@ const getUserOperation = async () => {
   const TokenContract = new ethers.Contract(tokenIN, TokenABI, signer);
   const SwapAllowance = ethers.parseEther("10");
 
-  //  callData: TokenContract.interface.encodeFunctionData("approve", [
-  //     SwapAddress,
-  //     SwapAllowance,
-  //   ]),
+  // initCode: hexConcat([contract.address, factory.interface.encodeFunctionData('createAccount', [await signer.getAddress(), 0])]),
+  // factory = contract = simpleAccountFactory
 
   const minTx = await TokenContract.transfer.populateTransaction(
     SwapAddress,
