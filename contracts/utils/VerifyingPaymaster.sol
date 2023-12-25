@@ -110,6 +110,24 @@ function getPartialHash(UserOperation calldata userOp, uint48 validUntil, uint48
         return ("",_packValidationData(false,validUntil,validAfter));
     }
 
+    function validatePaymasterUserOpPub(UserOperation calldata userOp, bytes32 /*userOpHash*/, uint256 requiredPreFund)
+    external view returns (bytes memory context, uint256 vcalidationData) {
+        (requiredPreFund);
+
+        (uint48 validUntil, uint48 validAfter, bytes calldata signature) = parsePaymasterAndData(userOp.paymasterAndData);
+        //ECDSA library supports both 64 and 65-byte long signatures.
+        // we only "require" it here so that the revert reason on invalid signature will be of "VerifyingPaymaster", and not "ECDSA"
+        require(signature.length == 64 || signature.length == 65, "VerifyingPaymaster: invalid signature length in paymasterAndData");
+        bytes32 hash = MessageHashUtils.toEthSignedMessageHash(getHash(userOp, validUntil, validAfter));
+
+        //don't revert on signature failure: return SIG_VALIDATION_FAILED
+        require(verifyingSigner == ECDSA.recover(hash, signature), "err sig");
+
+        //no need for other on-chain validation: entire UserOp should have been checked
+        // by the external service prior to signing it.
+        return ("",_packValidationData(false,validUntil,validAfter));
+    }
+
     function parsePaymasterAndData(bytes calldata paymasterAndData) public pure returns(uint48 validUntil, uint48 validAfter, bytes calldata signature) {
         (validUntil, validAfter) = abi.decode(paymasterAndData[VALID_TIMESTAMP_OFFSET:SIGNATURE_OFFSET],(uint48, uint48));
         signature = paymasterAndData[SIGNATURE_OFFSET:];

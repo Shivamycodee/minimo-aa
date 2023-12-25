@@ -10,6 +10,7 @@ const {
 } = require("./data.js");
 const TokenABI = require("./token.json");
 
+
 function convertBigIntToString(obj) {
   for (const key in obj) {
     if (typeof obj[key] === "bigint") {
@@ -30,10 +31,15 @@ class CustomJsonRpcProvider extends JsonRpcProvider {
   }
 }
 
-const rpcUrl =
-  "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
+//  const rpcUrl =
+//    "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
 
-const NONCE = 31;
+const rpcUrl =
+  "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
+
+
+
+const NONCE = 33;
 
 async function main() {
   const customProvider = new CustomJsonRpcProvider(rpcUrl);
@@ -44,54 +50,65 @@ async function main() {
     EntryPointAddress
   );
 
+  const userNonce = await EntryPoint.connect(deployer).getNonce(SCAddress, 0); // Get Valid Nonce.
+  console.log("userNonce : ", userNonce);
+
   const PaymasterContract = await ethers.getContractAt(
     "VerifyingPaymaster",
     VerifyingPaymasterAddress
   );
 
-  const userNonce = await EntryPoint.connect(deployer).getNonce(SCAddress, 0);
-  console.log("userNonce : ", userNonce);
-
   const opObject = await getUserOperation();
+  const timeLimit = getTxTimeLimit();
 
   // const res = await EntryPoint.connect(deployer).getUserOpHash(opObject);
-  // const wallet = new ethers.Wallet(
-  //   "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8"
-  // );
+  const wallet = new ethers.Wallet(
+    "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8"
+  );
+
   // const signature = await wallet.signMessage(ethers.toBeArray(res));
   // console.log("signature : ", signature);
   // opObject.signature = signature;
 
-  const timeLimit = getTxTimeLimit();
-  // const resP = await PaymasterContract.connect(deployer).getHash(
-  //   opObject,
-  //   timeLimit[0],
-  //   timeLimit[1]
-  //   );
+  const resP = await PaymasterContract.connect(deployer).getHash(
+    opObject,
+    timeLimit[0],
+    timeLimit[1]
+  );
 
-  //   console.log("resP : ", resP)
+  console.log("resP : ", resP);
 
-  const walletM = new ethers.Wallet(PayMaster_PRV_KEY); //POOL_PRV_KEY
-  //     const paymasterSignature = await walletM.signMessage(ethers.toBeArray(resP));
-  //     console.log("paymasterSignature : ", paymasterSignature);
+  const walletM = new ethers.Wallet(POOL_PRV_KEY);
+  const paymasterSignature = await walletM.signMessage(ethers.toBeArray(resP));
 
-  const hash = await getOnlyUserOpHash(opObject);
-
-  
-  
-  const paymasterSignature = await walletM.signMessage(ethers.toBeArray(hash));
   console.log("paymasterSignature : ", paymasterSignature);
-  
+
   const _paymasterAndData = getPaymasterAndData(
     VerifyingPaymasterAddress,
     paymasterSignature,
     timeLimit
-    );
-    opObject.paymasterAndData = _paymasterAndData;
-    
-    console.log("opObject : ", opObject);
+  );
+
+  opObject.paymasterAndData = _paymasterAndData;
+
+  const ares = await EntryPoint.connect(deployer).getUserOpHash(opObject);
+  const signatureH = await wallet.signMessage(ethers.toBeArray(ares));
+  opObject.signature = signatureH;
+
+  console.log("opObject : ", opObject);
+
+  // const data = await PaymasterContract.connect(deployer).parsePaymasterAndData(_paymasterAndData);
+  // console.log("data : ", data[0], data[1], data[2]);
 
   try {
+    // const validation = await PaymasterContract.connect(
+    //   deployer
+    // ).validatePaymasterUserOpPub(
+    //   opObject,
+    //   "0x25d65607d953183d526767406da1c9371569ad97570b34dfc0cb2e4d27d218d7",
+    //   "0"
+    // );
+    // console.debug("validation : ", validation);
     const userOpHash = await customProvider.sendUserOperation(
       opObject,
       EntryPointAddress
@@ -100,6 +117,12 @@ async function main() {
   } catch (error) {
     console.error("Error sending user operation:", error);
   }
+
+//  await EntryPoint.connect(deployer).handleOps([opObject],VerifyingPaymasterAddress);
+//   console.log("tx : ", tx.hash);    
+  
+
+
 }
 
 const getUserOperation = async () => {
@@ -131,10 +154,8 @@ const getUserOperation = async () => {
     preVerificationGas: 93636,
     maxFeePerGas: 100_000_000_000,
     maxPriorityFeePerGas: 100_000_000_000,
+    paymasterAndData: "0x", 
   };
-  // paymasterAndData: ethers.hexlify(ethers.toUtf8Bytes("")),
-
-  console.log("partial userOperation : ", userOperation);
 
   const hash = await getUserOpHash(userOperation, EntryPointAddress, 80001);
 
@@ -163,6 +184,7 @@ const getUserOpHash = async (op, entryPoint, chainId) => {
         "uint256",
         "uint256",
         "uint256",
+        "bytes"
       ],
       [
         op.sender,
@@ -174,6 +196,7 @@ const getUserOpHash = async (op, entryPoint, chainId) => {
         op.preVerificationGas,
         op.maxFeePerGas,
         op.maxPriorityFeePerGas,
+        op.paymasterAndData,
       ]
     )
   );
@@ -186,83 +209,12 @@ const getUserOpHash = async (op, entryPoint, chainId) => {
 
 };
 
-const getOnlyUserOpHash = async (op) => {
-  const abiCoder = new ethers.AbiCoder();
-  const userOpHash = ethers.keccak256(
-    abiCoder.encode(
-      [
-        "address",
-        "uint256",
-        "bytes",
-        "bytes",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-      ],
-      [
-        op.sender,
-        op.nonce,
-        op.initCode,
-        op.callData,
-        op.callGasLimit,
-        op.verificationGasLimit,
-        op.preVerificationGas,
-        op.maxFeePerGas,
-        op.maxPriorityFeePerGas,
-      ]
-    )
-  );
- 
-  return userOpHash;
-};
 
 function getTxTimeLimit() {
-  const currentTime = Math.floor(Date.now() / 1000);
-  const tenMinutesLater = currentTime + 600;
-  return [currentTime, tenMinutesLater];
+  const currentTime = Math.floor(Date.now() / 1000); // mili to sec
+  const tenMinutesLater = currentTime;
+  return [currentTime + 3600, tenMinutesLater];
 }
-
-// function getPaymasterAndData(
-//   VerifyingPaymasterAddress,
-//   paymasterSignature,
-//   timeLimit
-// ) {
-//   console.log("000");
-
-//   let addressBytes = ethers.toBeArray(VerifyingPaymasterAddress);
-//   console.log("addressBytes : ", addressBytes);
-
-//   console.log("111");
-
-//   // Manually pad the strings to fit into a bytes32 type
-//   let validUntilBytes = ethers.toBeHex(timeLimit[0], 32);
-//   let validAfterBytes = ethers.toBeHex(timeLimit[1], 32);
-
-//   let time = ethers.concat([validUntilBytes, validAfterBytes]);
-
-//   console.log("222");
-
-//   // Convert signature to bytes
-//   let signatureBytes = ethers.toBeArray(paymasterSignature);
-
-//   // Concatenate all bytes
-//   let paymasterAndData = ethers.concat([
-//     addressBytes,
-//   time,
-//     signatureBytes,
-//   ]);
-
-//   console.log("333");
-//   // Convert the result to a hex string if needed
-//   let paymasterAndDataHex = ethers.hexlify(paymasterAndData);
-
-//   console.log("Simple Paymaster and data: ", paymasterAndData);
-//   console.log("Simple Paymaster and data hex: ", paymasterAndDataHex);
-
-//   return paymasterAndData;
-// }
 
 function getPaymasterAndData(
   VerifyingPaymasterAddress,
@@ -276,7 +228,6 @@ function getPaymasterAndData(
     abiCoder.encode(["uint48", "uint48"], [timeLimit[0], timeLimit[1]]),
     paymasterSignature,
   ]);
-
   return paymasterAndData;
 }
 
