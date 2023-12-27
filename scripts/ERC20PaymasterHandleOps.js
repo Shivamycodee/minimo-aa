@@ -4,15 +4,13 @@ const { JsonRpcProvider } = require("@ethersproject/providers");
 const {
   EntryPointAddress,
   SCAddress,
-  VerifyingPaymasterAddress,
-  PayMaster_PRV_KEY,
-  POOL_PRV_KEY,
-  CoreTokenAddress,
   ERC20VerifierAddress,
+  SAFEPOOL_PRV_KEY,
+  CoreTokenAddress,
+  OracleAggregator,
 } = require("./data.js");
-const TokenABI = require("./token.json");
-const { verifyMessage } = require("ethers");
 
+const TokenABI = require("./token.json");
 
 function convertBigIntToString(obj) {
   for (const key in obj) {
@@ -34,18 +32,15 @@ class CustomJsonRpcProvider extends JsonRpcProvider {
   }
 }
 
-//  const rpcUrl =
-//    "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
+  const rpcUrl =
+    "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
 
-const rpcUrl =
-  "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
+// const rpcUrl =
+//   "https://api.pimlico.io/v1/mumbai/rpc?apikey=73686256-528c-49af-b70e-6ad6c80d3f5a";
 
-
-
-const NONCE = 40;
+const NONCE = 41;
 
 async function main() {
-
   const customProvider = new CustomJsonRpcProvider(rpcUrl);
   const [deployer] = await ethers.getSigners();
 
@@ -58,8 +53,8 @@ async function main() {
   console.log("userNonce : ", userNonce);
 
   const PaymasterContract = await ethers.getContractAt(
-    "VerifyingPaymaster",
-    VerifyingPaymasterAddress
+    "BiconomyTokenPaymaster",
+    ERC20VerifierAddress
   );
 
   const opObject = await getUserOperation();
@@ -71,21 +66,43 @@ async function main() {
 
   const resP = await PaymasterContract.connect(deployer).getHash(
     opObject,
+    1,
     timeLimit[0],
-    timeLimit[1]
+    timeLimit[1],
+    CoreTokenAddress,
+    OracleAggregator,
+    ethers.parseUnits("1", 16),
+    1e6 + 1e4
   );
 
   console.log("resP : ", resP);
 
-  const walletM = new ethers.Wallet(POOL_PRV_KEY);
+  const walletM = new ethers.Wallet(SAFEPOOL_PRV_KEY);
   const paymasterSignature = await walletM.signMessage(ethers.toBeArray(resP));
 
   console.log("paymasterSignature : ", paymasterSignature);
 
+
+//   function getPaymasterAndData(
+//   ERC20VerifierAddress,
+//   priceSource,
+//   paymasterSignature,
+//   timeLimit,
+//   feeToken,
+//   oracleAggregator,
+//   exchangeRate,
+//   priceMarkup
+// )
+
   const _paymasterAndData = getPaymasterAndData(
-    VerifyingPaymasterAddress,
+    ERC20VerifierAddress,
+    1,
     paymasterSignature,
-    timeLimit
+    timeLimit,
+    CoreTokenAddress,
+    OracleAggregator,
+    ethers.parseUnits("1", 16),
+    1e6 + 1e4
   );
 
   opObject.paymasterAndData = _paymasterAndData;
@@ -96,18 +113,7 @@ async function main() {
 
   console.log("opObject : ", opObject);
 
-  // const data = await PaymasterContract.connect(deployer).parsePaymasterAndData(_paymasterAndData);
-  // console.log("data : ", data[0], data[1], data[2]);
-
   // try {
-  //   // const validation = await PaymasterContract.connect(
-  //   //   deployer
-  //   // ).validatePaymasterUserOpPub(
-  //   //   opObject,
-  //   //   "0x25d65607d953183d526767406da1c9371569ad97570b34dfc0cb2e4d27d218d7",
-  //   //   "0"
-  //   // );
-  //   // console.debug("validation : ", validation);
   //   const userOpHash = await customProvider.sendUserOperation(
   //     opObject,
   //     EntryPointAddress
@@ -117,9 +123,8 @@ async function main() {
   //   console.error("Error sending user operation:", error);
   // }
 
-  const tx = await EntryPoint.connect(deployer).handleOps([opObject], VerifyingPaymasterAddress);
-  console.log("tx : ", tx.hash);    
-  
+  const tx = await EntryPoint.connect(deployer).handleOps([opObject], ERC20VerifierAddress);
+  console.log("tx : ", tx.hash);
 
 
 }
@@ -127,14 +132,13 @@ async function main() {
 const getUserOperation = async () => {
   const [signer] = await ethers.getSigners();
 
-  // const tokenIN = "0x8De6DcD5Bd1DeC1e8197FB4E0057498e7207133b";
-  const tokenIN = CoreTokenAddress;
+  const tokenIN = "0x8De6DcD5Bd1DeC1e8197FB4E0057498e7207133b";
   const SwapAddress = "0x31A92fCA50F511db28b57185ED6Ae12f565F2762";
   const TokenContract = new ethers.Contract(tokenIN, TokenABI, signer);
-  const SwapAllowance = ethers.parseEther("10000000000");
+  const SwapAllowance = ethers.parseEther("10");
 
-  const minTx = await TokenContract.approve.populateTransaction(
-    ERC20VerifierAddress,
+  const minTx = await TokenContract.transfer.populateTransaction(
+    SwapAddress,
     SwapAllowance
   );
 
@@ -154,7 +158,7 @@ const getUserOperation = async () => {
     preVerificationGas: 93636,
     maxFeePerGas: 100_000_000_000,
     maxPriorityFeePerGas: 100_000_000_000,
-    paymasterAndData: "0x", 
+    paymasterAndData: "0x",
   };
 
   const hash = await getUserOpHash(userOperation, EntryPointAddress, 80001);
@@ -167,8 +171,6 @@ const getUserOperation = async () => {
   userOperation.signature = signature;
   return userOperation;
 };
-
-
 
 const getUserOpHash = async (op, entryPoint, chainId) => {
   const abiCoder = new ethers.AbiCoder();
@@ -184,7 +186,7 @@ const getUserOpHash = async (op, entryPoint, chainId) => {
         "uint256",
         "uint256",
         "uint256",
-        "bytes"
+        "bytes",
       ],
       [
         op.sender,
@@ -206,9 +208,7 @@ const getUserOpHash = async (op, entryPoint, chainId) => {
   );
 
   return ethers.keccak256(enc);
-
 };
-
 
 function getTxTimeLimit() {
   const currentTime = Math.floor(Date.now() / 1000); // mili to sec
@@ -216,20 +216,57 @@ function getTxTimeLimit() {
   return [currentTime + 3600, tenMinutesLater];
 }
 
+// paymasterAndData: concat of [paymasterAddress(address), priceSource(enum 1 byte), abi.encode(validUntil, validAfter, feeToken, oracleAggregator, exchangeRate, priceMarkup): makes up 32*6 bytes, signature]
+
 function getPaymasterAndData(
-  VerifyingPaymasterAddress,
+  ERC20VerifierAddress,
+  priceSource,
   paymasterSignature,
-  timeLimit
+  timeLimit,
+  feeToken,
+  oracleAggregator,
+  exchangeRate,
+  priceMarkup
 ) {
+
   const abiCoder = new ethers.AbiCoder();
 
+  const priceSourceBytes = numberToHexString(priceSource);
+  console.log(priceSourceBytes);
+  
   const paymasterAndData = ethers.concat([
-    VerifyingPaymasterAddress,
-    abiCoder.encode(["uint48", "uint48"], [timeLimit[0], timeLimit[1]]),
+    ERC20VerifierAddress,
+    priceSourceBytes,
+    abiCoder.encode(
+      ["uint48", "uint48", "address", "address", "uint256", "uint32"],
+      [
+        timeLimit[0],
+        timeLimit[1],
+        feeToken,
+        oracleAggregator,
+        exchangeRate,
+        priceMarkup,
+      ]
+    ),
     paymasterSignature,
   ]);
+
   return paymasterAndData;
 }
+
+function numberToHexString(number) {
+  if (number < 0) {
+    throw new Error("Number must be positive");
+  }
+  let hexString = number.toString(16);
+  // Ensure even number of characters (pad with a leading zero if necessary)
+  if (hexString.length % 2 !== 0) {
+    hexString = "0" + hexString;
+  }
+  return "0x" + hexString;
+}
+
+
 
 main()
   .then(() => process.exit(0))

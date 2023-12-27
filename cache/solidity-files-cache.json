@@ -1510,8 +1510,8 @@
       ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\VerifyingPaymaster.sol": {
-      "lastModificationDate": 1703495809369,
-      "contentHash": "1b60ac6faccadb7053b3665b591f08b5",
+      "lastModificationDate": 1703506536806,
+      "contentHash": "5c2ef63c9194ce000d8e587459e17fdd",
       "sourceName": "contracts/utils/VerifyingPaymaster.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1859,8 +1859,8 @@
       ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\interfaces\\IOracle.sol": {
-      "lastModificationDate": 1701266565330,
-      "contentHash": "38933ea8534e2da6e8fd93d3adc5b009",
+      "lastModificationDate": 1703511322945,
+      "contentHash": "15cbf5e5c71bc5e73a8b416c6c46f69b",
       "sourceName": "contracts/interfaces/IOracle.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1895,8 +1895,8 @@
       ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\OracleHelper.sol": {
-      "lastModificationDate": 1701327053011,
-      "contentHash": "739d31bbc344ef6a9e758e0ba73a0fa4",
+      "lastModificationDate": 1703590970551,
+      "contentHash": "ad3ddde44a54f275da45cae0b426243a",
       "sourceName": "contracts/utils/OracleHelper.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1922,13 +1922,20 @@
           }
         }
       },
-      "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "imports": [
+        "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol",
+        "../interfaces/IOracle.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.12"
+      ],
+      "artifacts": [
+        "OracleHelper"
+      ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\TokenPaymaster.sol": {
-      "lastModificationDate": 1701334958390,
-      "contentHash": "c303f0ae9cb9c307c77f3b970fa4e4ae",
+      "lastModificationDate": 1703593851284,
+      "contentHash": "40fc50e255daac93382cf881b3c1144b",
       "sourceName": "contracts/utils/TokenPaymaster.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1954,13 +1961,23 @@
           }
         }
       },
-      "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/utils/cryptography/EIP712.sol",
+        "../interfaces/IEntryPoint.sol",
+        "../core/BasePaymaster.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.12"
+      ],
+      "artifacts": [
+        "TokenPaymaster"
+      ]
     },
     "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\UniswapHelper.sol": {
-      "lastModificationDate": 1701327096987,
-      "contentHash": "241d04d4d17e80ed91b83ab62548f1e7",
+      "lastModificationDate": 1703509143503,
+      "contentHash": "e34905d26d47a05234a82213803792e0",
       "sourceName": "contracts/utils/UniswapHelper.sol",
       "solcConfig": {
         "version": "0.8.20",
@@ -1986,9 +2003,475 @@
           }
         }
       },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol",
+        "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.12"
+      ],
+      "artifacts": [
+        "UniswapHelper"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\utils\\ShortStrings.sol": {
+      "lastModificationDate": 1699532543129,
+      "contentHash": "1b71929454f558e486d1f4f2471f29d4",
+      "sourceName": "@openzeppelin/contracts/utils/ShortStrings.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ShortStrings"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\utils\\cryptography\\EIP712.sol": {
+      "lastModificationDate": 1699532542882,
+      "contentHash": "33f2efa11c674f59f4b8365be7a58da9",
+      "sourceName": "@openzeppelin/contracts/utils/cryptography/EIP712.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./MessageHashUtils.sol",
+        "../ShortStrings.sol",
+        "../../interfaces/IERC5267.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "EIP712"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC5267.sol": {
+      "lastModificationDate": 1699532543062,
+      "contentHash": "94364524cb1a39dcbc3d3afff6d8e53e",
+      "sourceName": "@openzeppelin/contracts/interfaces/IERC5267.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
       "imports": [],
-      "versionPragmas": [],
-      "artifacts": []
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC5267"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
+      "lastModificationDate": 1699532543129,
+      "contentHash": "697fd27924863e77c17dace2179018b2",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol",
+        "../extensions/IERC20Permit.sol",
+        "../../../utils/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@uniswap\\v3-periphery\\contracts\\interfaces\\ISwapRouter.sol": {
+      "lastModificationDate": 1701266532027,
+      "contentHash": "ffd42687b3db01d30c24213d961fcf9f",
+      "sourceName": "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.5"
+      ],
+      "artifacts": [
+        "ISwapRouter"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@uniswap\\v3-core\\contracts\\interfaces\\callback\\IUniswapV3SwapCallback.sol": {
+      "lastModificationDate": 1701266528691,
+      "contentHash": "a8ba2d37b0107911ae0e3b0e123cbd83",
+      "sourceName": "@uniswap/v3-core/contracts/interfaces/callback/IUniswapV3SwapCallback.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.5.0"
+      ],
+      "artifacts": [
+        "IUniswapV3SwapCallback"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@uniswap\\v3-periphery\\contracts\\interfaces\\IPeripheryPayments.sol": {
+      "lastModificationDate": 1701266532017,
+      "contentHash": "8aa07bcaad7779d2bae8089adef235bf",
+      "sourceName": "@uniswap/v3-periphery/contracts/interfaces/IPeripheryPayments.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.5"
+      ],
+      "artifacts": [
+        "IPeripheryPayments"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
+      "lastModificationDate": 1699532543039,
+      "contentHash": "da291753fa4641f2c5837bfc4aa4c01b",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20Permit"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\BiconomyTokenPaymaster.sol": {
+      "lastModificationDate": 1703659913101,
+      "contentHash": "e2b330b74c44aac465b08f4195ee1c94",
+      "sourceName": "contracts/utils/BiconomyTokenPaymaster.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
+        "@openzeppelin/contracts/utils/cryptography/ECDSA.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/utils/Address.sol",
+        "@openzeppelin/contracts/utils/math/Math.sol",
+        "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol",
+        "../interfaces/IEntryPoint.sol",
+        "../interfaces/UserOperation.sol",
+        "../core/UserOperationLib.sol",
+        "../interfaces/IOracleAggregator.sol",
+        "./TokenPaymasterErrors.sol",
+        "../core/Helpers.sol",
+        "../core/BasePaymaster.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "BiconomyTokenPaymaster"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\interfaces\\IOracleAggregator.sol": {
+      "lastModificationDate": 1703599562178,
+      "contentHash": "2a80724cb301ed71b11bee3006eb5fdf",
+      "sourceName": "contracts/interfaces/IOracleAggregator.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "IOracleAggregator"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\utils\\TokenPaymasterErrors.sol": {
+      "lastModificationDate": 1703599514964,
+      "contentHash": "e9ffc17ca884af0517337aefcb0874b7",
+      "sourceName": "contracts/utils/TokenPaymasterErrors.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "TokenPaymasterErrors"
+      ]
+    },
+    "D:\\Office Work\\Others\\minimo-aa\\contracts\\token\\OracleAggregator.sol": {
+      "lastModificationDate": 1703660912587,
+      "contentHash": "fc4a242912a73c3c94dbc84c6783353b",
+      "sourceName": "contracts/token/OracleAggregator.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "evmVersion": "paris",
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.17"
+      ],
+      "artifacts": [
+        "OracleAggregator"
+      ]
     }
   }
 }

@@ -3,11 +3,13 @@ const { EntryPointAddress, VerifyingSigner } = require("./data.js");
 
 async function main() {
   // Get the Contract Factory
-  const CoreToken = await ethers.getContractFactory("VerifyingPaymaster");
+  // const CoreToken = await ethers.getContractFactory("VerifyingPaymaster");
+
+  const OracleContract = await ethers.getContractFactory("OracleAggregator");
 
   // Deploy the contract
-  const txReceipt = await CoreToken.deploy(EntryPointAddress, VerifyingSigner);
-  console.log("VerifyingPaymaster address : ", txReceipt.target);
+  const txReceipt = await OracleContract.deploy();
+  console.log("OracleAggregator address : ", txReceipt.target);
 }
 
 main()

@@ -132,5 +132,15 @@ function getPartialHash(UserOperation calldata userOp, uint48 validUntil, uint48
         (validUntil, validAfter) = abi.decode(paymasterAndData[VALID_TIMESTAMP_OFFSET:SIGNATURE_OFFSET],(uint48, uint48));
         signature = paymasterAndData[SIGNATURE_OFFSET:];
     }
+
+
+    function withdrawBalance() external onlyAdmin {
+        payable(msg.sender).transfer(address(this).balance);
+    }
+
+
+    receive() external payable {}
+
+    
     
 }

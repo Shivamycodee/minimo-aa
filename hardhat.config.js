@@ -5,6 +5,10 @@ require("@nomicfoundation/hardhat-toolbox");
 const PRIVATE_KEY_POOL =
   "250acaa252c13324faaedf8cac88016950f9c139d050b1c6a86d59c8e8a9db7e"; // Testnet address...
 
+const PRIVATE_SAFE_POOL =
+  "fcaaf6c304ad2e8ed1e9413be2a0fd7afd577ecae67280a2c2b90b0827ffe4e3"; // safe pool...
+
+
 const AA_PRIVATE_KEY =
   "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8";
 
@@ -12,8 +16,8 @@ const AA_PRIVATE_KEY =
 // const URL =
 //   "https://polygon-mumbai.g.alchemy.com/v2/MOVV7rp81t6Dl3LqzWxV65ZQso9zaPY5";
 
-const URL =
-  "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
+ const URL =
+   "https://api.stackup.sh/v1/node/8d4f475df648de93f011bdaf3a2f856d10d7ffd7abb90cc754d52829a8131fba";
 
 // const URL = "http://localhost:3000/rpc";
 
@@ -29,22 +33,22 @@ const URL =
   https: module.exports = {
     solidity: "0.8.20",
     settings: {
+      viaIR: true,
       optimizer: {
         enabled: true,
         runs: 1000,
         details: {
           yulDetails: {
-            optimizerSteps: "unlimited",
+            optimizerSteps: "u",
           },
         },
       },
-      viaIR: true,
     },
     networks: {
       mumbai: {
         url: URL,
         gasPrice: 80_000_000_000,
-        accounts: [AA_PRIVATE_KEY],
+        accounts: [PRIVATE_SAFE_POOL],
       },
     },
     etherscan: {

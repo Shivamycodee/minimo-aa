@@ -1,0 +1,66 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "TokenPaymasterErrors",
+  "sourceName": "contracts/utils/TokenPaymasterErrors.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "CanNotWithdrawToZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "CannotBeUnrealisticValue",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "DEXRouterCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "DepositCanNotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "EntryPointCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "FeeReceiverCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NativeTokenBalanceZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NativeTokensWithdrawalFailed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OwnerCannotBeZero",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TokensAndAmountsLengthMismatch",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "VerifyingSignerCannotBeZero",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea264697066735822122056b9af42bf682b6cbee88a198656ea2bd002b6f7701e485c754317ae7385268a64736f6c63430008140033",
+  "deployedBytecode": "0x6080604052600080fdfea264697066735822122056b9af42bf682b6cbee88a198656ea2bd002b6f7701e485c754317ae7385268a64736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
