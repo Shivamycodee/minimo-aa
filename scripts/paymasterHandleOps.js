@@ -8,6 +8,7 @@ const {
   PayMaster_PRV_KEY,
   POOL_PRV_KEY,
   CoreTokenAddress,
+  SimpleAccountFactoryAddress,
   ERC20VerifierAddress,
 } = require("./data.js");
 const TokenABI = require("./token.json");
@@ -42,7 +43,7 @@ const rpcUrl =
 
 
 
-const NONCE = 40;
+const NONCE = 63;
 
 async function main() {
 
@@ -66,8 +67,10 @@ async function main() {
   const timeLimit = getTxTimeLimit();
 
   const wallet = new ethers.Wallet(
-    "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8"
+    "e8e2094d3bf57de0f568ff1fc97524647f24f0cfc37a058124d998754f60c49e"
   );
+
+  console.log("PRE opObject : ", opObject);
 
   const resP = await PaymasterContract.connect(deployer).getHash(
     opObject,
@@ -88,6 +91,8 @@ async function main() {
     timeLimit
   );
 
+  console.log("_paymasterAndData : ", _paymasterAndData);
+
   opObject.paymasterAndData = _paymasterAndData;
 
   const ares = await EntryPoint.connect(deployer).getUserOpHash(opObject);
@@ -96,117 +101,76 @@ async function main() {
 
   console.log("opObject : ", opObject);
 
-  // const data = await PaymasterContract.connect(deployer).parsePaymasterAndData(_paymasterAndData);
-  // console.log("data : ", data[0], data[1], data[2]);
-
   // try {
-  //   // const validation = await PaymasterContract.connect(
-  //   //   deployer
-  //   // ).validatePaymasterUserOpPub(
-  //   //   opObject,
-  //   //   "0x25d65607d953183d526767406da1c9371569ad97570b34dfc0cb2e4d27d218d7",
-  //   //   "0"
-  //   // );
-  //   // console.debug("validation : ", validation);
   //   const userOpHash = await customProvider.sendUserOperation(
   //     opObject,
   //     EntryPointAddress
   //   );
   //   console.log("User Operation Hash:", userOpHash);
+
   // } catch (error) {
   //   console.error("Error sending user operation:", error);
   // }
 
   const tx = await EntryPoint.connect(deployer).handleOps([opObject], VerifyingPaymasterAddress);
   console.log("tx : ", tx.hash);    
-  
-
 
 }
 
 const getUserOperation = async () => {
   const [signer] = await ethers.getSigners();
 
-  // const tokenIN = "0x8De6DcD5Bd1DeC1e8197FB4E0057498e7207133b";
-  const tokenIN = CoreTokenAddress;
+  const tokenIN = "0x8De6DcD5Bd1DeC1e8197FB4E0057498e7207133b";
+  // const tokenIN = CoreTokenAddress;
   const SwapAddress = "0x31A92fCA50F511db28b57185ED6Ae12f565F2762";
   const TokenContract = new ethers.Contract(tokenIN, TokenABI, signer);
-  const SwapAllowance = ethers.parseEther("10000000000");
+  const SwapAllowance = ethers.parseEther("10000000000000");
 
+  
   const minTx = await TokenContract.approve.populateTransaction(
-    ERC20VerifierAddress,
+    SwapAddress,
     SwapAllowance
-  );
+    );
+    
+    const SimpleAccount = await ethers.getContractAt("SimpleAccount", SCAddress);
+    
+    const userOperation = {
+      sender: "0x2a05c8E99cB69711d8abFb53C66188c3cB2c157c",
+      nonce: NONCE,
+      initCode: ethers.hexlify(ethers.toUtf8Bytes("")),
+      callData: SimpleAccount.interface.encodeFunctionData("execute", [
+        tokenIN,
+        0,
+        minTx.data,
+      ]),
+      callGasLimit: 112489,
+      verificationGasLimit: 87538,
+      preVerificationGas: 93636,
+      maxFeePerGas: 100_000_000_000,
+      maxPriorityFeePerGas: 100_000_000_000,
+      paymasterAndData: "0x",
+      signature: "0x",
+    };
+    
+    console.log("1")
 
-  const SimpleAccount = await ethers.getContractAt("SimpleAccount", SCAddress);
+    const SimpleAccFactoryContract = await ethers.getContractAt(
+      "SimpleAccountFactory",
+      SimpleAccountFactoryAddress
+    );
+      
 
-  const userOperation = {
-    sender: "0x3E2341F136005F88323dDdF5BA025c0b9Bb41feF",
-    nonce: NONCE,
-    initCode: ethers.hexlify(ethers.toUtf8Bytes("")),
-    callData: SimpleAccount.interface.encodeFunctionData("execute", [
-      tokenIN,
+  const _initCode = ethers.concat([
+    SimpleAccountFactoryAddress,
+    SimpleAccFactoryContract.interface.encodeFunctionData("createAccount", [
+      "0xEF90dC3BEf86393cf1bca40e16250A735F7fEF6B",
       0,
-      minTx.data,
     ]),
-    callGasLimit: 112489,
-    verificationGasLimit: 87538,
-    preVerificationGas: 93636,
-    maxFeePerGas: 100_000_000_000,
-    maxPriorityFeePerGas: 100_000_000_000,
-    paymasterAndData: "0x", 
-  };
+  ]);
 
-  const hash = await getUserOpHash(userOperation, EntryPointAddress, 80001);
+  userOperation.initCode = _initCode;
 
-  const wallet = new ethers.Wallet(
-    "6a694a78c531a1cc2d72848f08481a6ab2aee622a858f7593cb88565da252dc8"
-  );
-
-  const signature = await wallet.signMessage(ethers.toBeArray(hash));
-  userOperation.signature = signature;
   return userOperation;
-};
-
-
-
-const getUserOpHash = async (op, entryPoint, chainId) => {
-  const abiCoder = new ethers.AbiCoder();
-  const userOpHash = ethers.keccak256(
-    abiCoder.encode(
-      [
-        "address",
-        "uint256",
-        "bytes",
-        "bytes",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-        "uint256",
-        "bytes"
-      ],
-      [
-        op.sender,
-        op.nonce,
-        op.initCode,
-        op.callData,
-        op.callGasLimit,
-        op.verificationGasLimit,
-        op.preVerificationGas,
-        op.maxFeePerGas,
-        op.maxPriorityFeePerGas,
-        op.paymasterAndData,
-      ]
-    )
-  );
-  const enc = abiCoder.encode(
-    ["bytes32", "address", "uint256"],
-    [userOpHash, entryPoint, BigInt(chainId)]
-  );
-
-  return ethers.keccak256(enc);
-
 };
 
 

@@ -27,12 +27,7 @@ data = {
   POOL_PRV_KEY:
     "250acaa252c13324faaedf8cac88016950f9c139d050b1c6a86d59c8e8a9db7e",
 
-  // Matic Address...
 
-  MATICAddress: "0x0000000000000000000000000000000000001010",
-  WMATICAddress: "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889",
-
-  SwapRouterV2: "0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45",
 };
 
 module.exports = data;
